@@ -223,7 +223,7 @@ Trial2 <- Trial %>%
 
 Trial2 %>% 
   ggplot(aes(Weight_Gain, mean_sleep)) +
-    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.5) +
     geom_errorbar(aes(ymin = mean_sleep - sd_sleep,
                       ymax = mean_sleep + sd_sleep),
                   color = "#22292F",
@@ -231,7 +231,7 @@ Trial2 %>%
 
 Trial2 %>% 
   ggplot(aes(Weight_Gain, mean_ScreenTime)) +
-    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.5) +
     geom_errorbar(aes(ymin = mean_ScreenTime - sd_ScreenTime,
                       ymax = mean_ScreenTime + sd_ScreenTime),
                   color = "#22292F",
@@ -239,7 +239,7 @@ Trial2 %>%
 
 Trial2 %>% 
   ggplot(aes(Weight_Gain, mean_Video)) +
-    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.5) +
     geom_errorbar(aes(ymin = mean_Video - sd_Video,
                       ymax = mean_Video + sd_Video),
                   color = "#22292F",
