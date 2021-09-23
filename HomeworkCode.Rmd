@@ -73,6 +73,7 @@ New_Egypt
 
 ```
 
+
 Summary - General BMI increase, no positive correlation in routine and weight gain or loss.
 Although proportionally - about 40% (2 of 5) of people with intense routine had BMI loss, while over 80% of athletes that did not undergo any routine had an increase BMI> 
 
@@ -84,7 +85,7 @@ compare_means(BMI_DIFF ~ Routine,  data = New_Egypt)
 my_comp <- list( c("Mild", "None"), c("Mild", "Medium"), c("Intense", "Medium"), c("Intense", "Mild"), c("Intense", "None") )
 
 ggboxplot(New_Egypt, x = "Routine", y = "BMI_DIFF",
-          fill = "plum", palette = "jco")+ 
+          fill = "plum")+ 
   
   labs(title="Box plot", 
     subtitle="Body Mass Index Change based on Routine",
@@ -117,6 +118,7 @@ Egypt2 %>%
                   color = "#22292F",
                   width = .1)
 
+
 ```
 
 
@@ -128,7 +130,6 @@ Soccer <- New_Egypt[,c(9:10, 12:13, 22)]
 Soccer2 <- cor(Soccer, method = "pearson")
 Soccer2
 
-data(Soccer2)
 corr <- round(cor(Soccer2), 1)
 
 # Plot
@@ -147,24 +148,27 @@ P_Check <- select(New_Egypt, 9,11, 19:22)
 
 ggplot(data = P_Check) +
   geom_smooth(
-    mapping = aes(x = BMI_DIFF , y = DASS_D),
+    mapping = aes(x = DASS_D, y = BMI_DIFF),
     show.legend = FALSE
-  )
+  ) 
+
 ```
 
 ```{r}
 ggplot(data = P_Check) +
   geom_smooth(
-    mapping = aes(x = BMI_DIFF, y = DASS_A),
+    mapping = aes(x = DASS_A, y = BMI_DIFF),
     show.legend = FALSE
-  )
+  ) + 
+  labs(title="Correlation Map", 
+       subtitle="Correlationn betweenn Anxiety and Change on BMI") 
 ```
-
+*Negative correlation mentioned in article.
 
 
 ```{r}
 egypt2 <- New_Egypt %>% 
-  group_by(Routine) %>% 
+  group_by(BMI_DIFF) %>% 
   summarise(
     mean_sleep = mean(Daily_Sleep_Hours),
     sd_sleep   = sd(Daily_Sleep_Hours),
@@ -175,21 +179,6 @@ egypt2 <- New_Egypt %>%
 egypt2
 ```
 
-```{r}
-Egypt3 <- select(New_Egypt, 9:13)
-theme_set(theme_classic())
-
-# Histogram on a Continuous (Numeric) Variable
-g <- ggplot(Egypt3, aes(Daily_Sleep_Hours)) + scale_fill_brewer(palette = "Spectral")
-
-g + geom_histogram(aes(fill=Routine), 
-                   binwidth = .3, 
-                   col="black", 
-                   size=.5) +  # change binwidth
-  labs(title="Histogram with Auto Binning", 
-       subtitle="Daily Sleep across Routine")  
-```
-
 Check Qol Change wiht WeightGain and BMI Change
 
 ```{r}
@@ -197,10 +186,76 @@ P_Check2 <- select(New_Egypt, 9,22:23)
 
 ggplot(data = P_Check2) +
   geom_smooth(
-    mapping = aes(x = BMI_DIFF , y = Qol_Change),
+    mapping = aes(x = Qol_Change, y = BMI_DIFF),
     show.legend = FALSE
   ) +
     labs(title="Correlation Map", 
        subtitle="Influence of Quality of Life Change on BMI") 
 ```
 Higher Qol Change correlates with Increase in BMI.
+
+```{r}
+Trial <- New_Egypt %>% 
+  mutate(
+    Weight_Gain = case_when(
+      Weight_Gain == "1" ~ "Yes",
+      Weight_Gain == "0" ~ "No"
+    ) %>% 
+      as.factor %>% 
+      fct_relevel("Yes", "No")
+  )
+
+Trial
+```
+
+```{r}
+Trial2 <- Trial %>% 
+  group_by(Weight_Gain) %>% 
+  summarise(
+    mean_sleep = mean(Daily_Sleep_Hours),
+    sd_sleep   = sd(Daily_Sleep_Hours), 
+    mean_ScreenTime = mean(ScreenTime),
+    sd_ScreenTime   = sd(ScreenTime), 
+    mean_Video = mean(VideoGame),
+    sd_Video   = sd(VideoGame), 
+    
+  ) 
+
+Trial2 %>% 
+  ggplot(aes(Weight_Gain, mean_sleep)) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_errorbar(aes(ymin = mean_sleep - sd_sleep,
+                      ymax = mean_sleep + sd_sleep),
+                  color = "#22292F",
+                  width = .1)
+
+Trial2 %>% 
+  ggplot(aes(Weight_Gain, mean_ScreenTime)) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_errorbar(aes(ymin = mean_ScreenTime - sd_ScreenTime,
+                      ymax = mean_ScreenTime + sd_ScreenTime),
+                  color = "#22292F",
+                  width = .1)
+
+Trial2 %>% 
+  ggplot(aes(Weight_Gain, mean_Video)) +
+    geom_col(aes(fill = Weight_Gain), color = "black", width = 0.85) +
+    geom_errorbar(aes(ymin = mean_Video - sd_Video,
+                      ymax = mean_Video + sd_Video),
+                  color = "#22292F",
+                  width = .1)
+
+```
+
+
+```{r}
+ggplot(data = Trial) + 
+  stat_count(mapping = aes(x = Weight_Gain, fill = Routine), position = "dodge") +
+  
+  labs(title="Grouped Bar Chart", 
+       subtitle="Comaring Weight Gain based on Routine")
+```
+
+
+
+
